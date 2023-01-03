@@ -61,12 +61,12 @@ var (
 			"  Usage: ann config --rm-replace gopkg.in/yaml.v3:yaml,yml --rm-replace another.com/without/colon/to/remove/all\n",
 	}
 
-	Chain = args.Chain{
+	Chain = args.NewChain(
 		Build,
 		Clean,
 		Version,
 		Config,
-	}
+	)
 )
 
 func setConfig(kvs args.KV) {
