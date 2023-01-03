@@ -114,14 +114,7 @@ func readComments(lastLine string, re *bufio.Reader) []string {
 
 func readImports(lastLine string, re *bufio.Reader) []*GoImport {
 	if !strings.Contains(lastLine, "(") {
-		temp := strings.Fields(lastLine)
-		if len(temp) == 2 {
-			return []*GoImport{{Path: strings.Trim(temp[1], "\"")}}
-		} else if len(temp) == 3 {
-			return []*GoImport{{Path: strings.Trim(temp[2], "\""), Alias: temp[1]}}
-		} else {
-			return nil
-		}
+		return []*GoImport{readImport(lastLine)}
 	}
 	var imps []*GoImport
 	for {
@@ -135,13 +128,23 @@ func readImports(lastLine string, re *bufio.Reader) []*GoImport {
 		if line == ")" {
 			return imps
 		}
-		temp := strings.Fields(lastLine)
-		if len(temp) == 2 {
-			imps = append(imps, &GoImport{Path: strings.Trim(temp[1], "\"")})
-		} else if len(temp) == 3 {
-			imps = append(imps, &GoImport{Path: strings.Trim(temp[2], "\""), Alias: temp[1]})
-		}
+		imps = append(imps, readImport(lastLine))
 	}
+}
+
+func readImport(line string) *GoImport {
+	temp := strings.Fields(line)
+	var im = new(GoImport)
+	if len(temp) == 2 {
+		im.Path = strings.Trim(temp[1], "\"")
+	} else if len(temp) == 3 {
+		im.Path = strings.Trim(temp[2], "\"")
+		im.Alias = []string{temp[1]}
+	}
+	if replace := config.Replace[im.Path]; len(replace) > 0 {
+		im.Alias = append(im.Alias, replace...)
+	}
+	return im
 }
 
 func readFuncOrStruct(lastLine string, re *bufio.Reader, comments []string) *element {

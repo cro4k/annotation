@@ -108,7 +108,7 @@ func (i *annotationItem) Format() (string, []string) {
 
 type GoImport struct {
 	Path  string
-	Alias string
+	Alias []string
 }
 
 type GoFile struct {
@@ -133,19 +133,21 @@ func (f *GoFile) context() *context {
 	ctx.importPath = f.ImportPath
 	ctx.imports = make(map[string]string)
 	for _, v := range f.Imports {
-		if v.Alias == "." || v.Alias == "_" {
-			continue
-		}
-		name := v.Alias
-		if name == "" {
-			n := strings.LastIndex(v.Path, "/")
-			if n >= 0 {
-				name = v.Path[n+1:]
-			} else {
-				name = v.Path
+		for _, alias := range v.Alias {
+			if alias == "." || alias == "_" {
+				continue
 			}
+			name := alias
+			if name == "" {
+				n := strings.LastIndex(v.Path, "/")
+				if n >= 0 {
+					name = v.Path[n+1:]
+				} else {
+					name = v.Path
+				}
+			}
+			ctx.imports[name] = v.Path
 		}
-		ctx.imports[name] = v.Path
 	}
 	return ctx
 }
