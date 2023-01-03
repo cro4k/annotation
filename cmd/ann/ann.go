@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	kv, cmd := args.Parse()
-	msg, err := command.Handle(kv, cmd)
+	args.Parse()
+	msg, err := command.Chain.Do(args.Parse())
 	if err != nil {
 		_, _ = os.Stderr.WriteString(err.Error())
 	} else if msg != "" {
