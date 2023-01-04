@@ -18,6 +18,11 @@ import(
 {{imports}}
 )
 
+const (
+	TypeFunc   = 1
+	TypeStruct = 2
+)
+
 var elements = map[string]*core.Element{
 {{elements}}
 }

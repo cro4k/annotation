@@ -12,7 +12,7 @@ const (
 
 const (
 	elementTpl = `{
-		Type: %d,
+		Type: %s,
 		Name: "%s",
 		Ptr: %s,
 		Path: "%s",
@@ -49,6 +49,11 @@ type relation struct {
 	Type int
 }
 
+var types = map[int]string{
+	TypeFunc:   "TypeFunc",
+	TypeStruct: "TypeStruct",
+}
+
 func (e *element) Format() (string, []string) {
 	var imports []string
 	var anns []string
@@ -74,7 +79,7 @@ func (e *element) Format() (string, []string) {
 	}
 
 	text := fmt.Sprintf(elementTpl,
-		e.Type,
+		types[e.Type],
 		e.Name,
 		ptr,
 		e.Path,
