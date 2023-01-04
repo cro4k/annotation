@@ -152,10 +152,11 @@ func readFuncOrStruct(lastLine string, re *bufio.Reader, comments []string) *ele
 	funcFields := strings.Fields(lastLine)
 	var name = funcFields[1]
 	if strings.HasPrefix(lastLine, "func") {
-		if name[0] == '(' {
-			name = funcFields[3]
-		}
-		name = strings.Split(name, "(")[0]
+		//if name[0] == '(' {
+		//	name = funcFields[3]
+		//}
+		//name = strings.Split(name, "(")[0]
+		name = funcName(lastLine)
 	}
 
 	var e = new(element)
@@ -181,6 +182,20 @@ func readFuncOrStruct(lastLine string, re *bufio.Reader, comments []string) *ele
 		right += strings.Count(line, "}")
 	}
 	return e
+}
+
+func funcName(line string) string {
+	tmp := strings.TrimSpace(strings.TrimPrefix(line, "func "))
+	n := strings.Index(tmp, "(")
+	if n == 0 {
+		n2 := strings.Index(tmp, ")")
+		n3 := strings.Index(tmp[n2+1:], "(")
+		return strings.TrimSpace(tmp[n2+1 : n2+1+n3])
+	} else if n > 0 {
+
+		return strings.TrimSpace(tmp[:n])
+	}
+	return ""
 }
 
 func readLine(re *bufio.Reader) (string, error) {
