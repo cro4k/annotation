@@ -278,7 +278,7 @@ func decodeGoFiles(module string, root string) ([]*GoFile, error) {
 		if path == root {
 			return nil
 		}
-		if info.IsDir() {
+		if info.IsDir() || !strings.HasSuffix(path, ".go") {
 			return nil
 		}
 		file, err := decodeFile(module, path)
